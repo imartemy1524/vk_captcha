@@ -68,7 +68,7 @@ class VkCaptchaSolver:
             if url is not None:
                 for _ in range(4):
                     try:
-                        bytes_data = (session or requests).get(url).content
+                        bytes_data = (session or requests).get(url, headers={"Content-language": "en"}).content
                         if bytes_data is None:
                             raise ProxyError("Can not download data, probably proxy error")
                         break
@@ -123,10 +123,11 @@ class VkCaptchaSolver:
                 for _ in range(4):
                     try:
                         if session is None:
-                            async with aiohttp.ClientSession() as session, session.get(url) as resp:
+                            async with aiohttp.ClientSession(headers={"Content-language": "en"}) as session_m, \
+                                    session_m.get(url) as resp:
                                 bytes_data = await resp.content.read()
                         else:
-                            async with session.get(url) as rest:
+                            async with session.get(url) as resp:
                                 bytes_data = await resp.content.read()
                         if bytes_data is None: raise ProxyError("Can not download captcha - probably proxy error")
                         break

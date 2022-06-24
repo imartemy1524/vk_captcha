@@ -4,7 +4,7 @@ with open("./requirements.txt") as req_file:
 setup(
   name='vk_captcha',         # How you named your package folder (MyLib)
   packages=['vk_captcha'],   # Chose the same as "name"
-  version='0.6',      # Start with a small number and increase it with every change you make
+  version='0.7',      # Start with a small number and increase it with every change you make
   license='MIT',
   description='Library to solve vk captcha async/sync.\nFree.\nHigh speed.',
   author='IMCorp',                   # Type in your name

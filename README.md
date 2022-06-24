@@ -42,13 +42,14 @@ print(f"I solved captcha = {answer} with accuracy {accuracy:.4}")
 ```python
 from vk_captcha import VkCaptchaSolver
 import random, asyncio
-solver = VkCaptchaSolver(logging=True)  # use logging=False on deploy
+solver = VkCaptchaSolver(logging=False)  # use logging=False on deploy
 async def captcha_solver():
     sid = random.randint(122112, 10102012012012)
     easy_captcha = False
     url = f"https://api.vk.com/captcha.php?sid={sid}&s={int(easy_captcha)}"
     answer, accuracy = await solver.solve_async(url=url, minimum_accuracy=0.4, repeat_count=10)
     print(f"Solved captcha = {answer} with accuracy {accuracy:.4}")
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(captcha_solver())
 ```
 
