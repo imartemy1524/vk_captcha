@@ -1,13 +1,21 @@
-from distutils.core import setup
+from setuptools import setup
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 with open("./requirements.txt") as req_file:
     requirements =[i.replace('\n', '').replace('\r', '') for i in req_file]
+
+
 setup(
-  name='vk_captcha',         # How you named your package folder (MyLib)
-  packages=['vk_captcha'],   # Chose the same as "name"
-  version='0.8',      # Start with a small number and increase it with every change you make
+  name='vk_captcha',
+  packages=['vk_captcha'],
+  version='0.9',
   license='MIT',
-  description='Library to solve vk captcha async/sync.\nFree.\nHigh speed.',
-  author='IMCorp',                   # Type in your name
+  author='IMCorp',
+#  description='Library to solve vk captcha async/sync.\nFree.\nHigh speed.',
+  long_description_content_type='text/markdown',
+  long_description=long_description,
   package_data={'vk_captcha': ['*.onnx']},
   author_email='imartemy1@gmail.com',
   url='https://github.com/imartemy1524/vk_captcha',   # Provide either the link to your github or to your website

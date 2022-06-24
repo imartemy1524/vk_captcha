@@ -1,39 +1,51 @@
 <h1 align="center">
 <a href="https://github.com/imartemy1524/vk_captcha">vk_captcha</a> 
-- AI <a href="vk.com/dev">VK</a> captcha solver for <b>60%</b> accuracy</h1>
-<h2>Requirements</h2>
-<blockquote>Python3.3 - python3.9</blockquote>
-Python 3.10 is not supported yet because 
-<a href="https://pypi.org/project/onnxruntime/">onnxruntime</a> 
-is not supporting <b>python3.10</b>
+- AI <a href="https://vk.com/dev">VK</a> captcha solver for <b>60%</b> accuracy
+</h1>
 
-##Installation
-```commandline
+## Requirements
+> Python3.3 - python3.9
+
+Python 3.10 is not supported yet because 
+[onnxruntime](https://pypi.org/project/onnxruntime/) 
+is not supporting **python3.10**
+
+## Installation
+
+
+```
 pip install vk_captcha
-#or
-pip install https://github.com/imartemy1524/vk_captcha/blob/main/dist/vk_captcha-0.8.tar.gz
-#or
+or
+pip install https://github.com/imartemy1524/vk_captcha/blob/main/dist/vk_captcha-0.9.tar.gz
+or
 pip install git+https://github.com/imartemy1524/vk_captcha
 ```
 
 
-### Fast examples:</h3>
+### Fast examples:
+
 #### using [vk_api](https://github.com/python273/vk_api) library:
+
 ```python
 from vk_captcha import vk_api_handler
 vk = vk_api_handler.VkApiCaptcha("88005553535", "efwoewkofokw")  # this login will create captcha
 vk_api_handler.Solver.logging = True  # enable logging
 vk.auth() # getting captcha error and automatically solve it
 ```
+
 #### another way with [vk_api](https://github.com/python273/vk_api):
+
 ```python
 from vk_captcha import VkCaptchaSolver
 from vk_api import VkApi
 solver = VkCaptchaSolver(logging=True)  # use logging=False on deploy
-vk = VkApi(login='...', password='...', captcha_handler=solver.vk_api_captcha_handler)
+vk = VkApi(login='', password='', captcha_handler=solver.vk_api_captcha_handler)
 vk.method("any.method.with.captcha.will.be.handled")
 ```
+
 #### just solve captcha from *url* / *bytes*
+
+
 ```python
 from vk_captcha import VkCaptchaSolver
 import random, requests
@@ -56,7 +68,9 @@ answer, accuracy = solver.solve(
 #answer, accuracy = solver.solve(bytes_data=session.get(url))
 print(f"I solved captcha = {answer} with accuracy {accuracy:.4}")
 ```
+
 #### async way:
+
 ```python
 from vk_captcha import VkCaptchaSolver
 import random, asyncio
@@ -72,6 +86,7 @@ asyncio.run(captcha_solver())
 ```
 
 In theory, for other languages you can use command line solver ( **NOT RECOMMENDED**, it will always load model again):
-```commandline
+
+```
 python -m vk_captcha -url "https://api.vk.com/captcha.php?sid=2323832899382092" -minimum-accuracy 0.33 -repeat-count 13
 ```
