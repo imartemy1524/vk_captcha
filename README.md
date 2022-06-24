@@ -1,4 +1,22 @@
-# [vk_captcha](https://github.com/imartemy1524/vk_captcha) - solve vk captcha free for 60% accuracy
+<h1 align="center">
+<a href="https://github.com/imartemy1524/vk_captcha">vk_captcha</a> 
+- AI <a href="vk.com/dev">VK</a> captcha solver for <b>60%</b> accuracy</h1>
+<h2>Requirements</h2>
+<blockquote>Python3.3 - python3.9</blockquote>
+Python 3.10 is not supported yet because 
+<a href="https://pypi.org/project/onnxruntime/">onnxruntime</a> 
+is not supporting <b>python3.10</b>
+
+##Installation
+```commandline
+pip install vk_captcha
+#or
+pip install https://github.com/imartemy1524/vk_captcha/blob/main/dist/vk_captcha-0.8.tar.gz
+#or
+pip install git+https://github.com/imartemy1524/vk_captcha
+```
+
+
 ### Fast examples:</h3>
 #### using [vk_api](https://github.com/python273/vk_api) library:
 ```python
@@ -53,7 +71,7 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(captcha_solver())
 ```
 
-In theory, you can use command line solver:
+In theory, for other languages you can use command line solver ( **NOT RECOMMENDED**, it will always load model again):
 ```commandline
 python -m vk_captcha -url "https://api.vk.com/captcha.php?sid=2323832899382092" -minimum-accuracy 0.33 -repeat-count 13
 ```

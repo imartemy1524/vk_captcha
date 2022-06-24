@@ -1,4 +1,4 @@
-from vk_captcha.src.solver import VkCaptchaSolver
+from .solver import VkCaptchaSolver
 
-__version__ = 1.1
+__version__ = '0.8'
 
