@@ -8,7 +8,7 @@ setup(
   license='MIT',
   description='Library to solve vk captcha async/sync.\nFree.\nHigh speed.',
   author='IMCorp',                   # Type in your name
-  author_email='imartemy1@gmail.com', 
+  author_email='imartemy1@gmail.com',
   url='https://github.com/imartemy1524/vk_captcha',   # Provide either the link to your github or to your website
   # download_url='https://github.com/imartemy1524/vk_captcha/archive/v_01.tar.gz',    # I explain this later on
   keywords=['vk', 'vk_api', 'captcha', 'vk_captcha', 'solver'],

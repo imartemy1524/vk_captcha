@@ -5,7 +5,7 @@
 from vk_captcha import vk_api_handler
 vk = vk_api_handler.VkApiCaptcha("88005553535", "efwoewkofokw")  # this login will create captcha
 vk_api_handler.Solver.logging = True  # enable logging
-vk.auth() # getting captcha error and automatically solving it
+vk.auth() # getting captcha error and automatically solve it
 ```
 #### another way with [vk_api](https://github.com/python273/vk_api):
 ```python
@@ -47,7 +47,7 @@ async def captcha_solver():
     sid = random.randint(122112, 10102012012012)
     easy_captcha = False
     url = f"https://api.vk.com/captcha.php?sid={sid}&s={int(easy_captcha)}"
-    answer, accuracy = solver.solve_async(url=url, minimum_accuracy=0.4, repeat_count=10)
+    answer, accuracy = await solver.solve_async(url=url, minimum_accuracy=0.4, repeat_count=10)
     print(f"Solved captcha = {answer} with accuracy {accuracy:.4}")
 asyncio.run(captcha_solver())
 ```
