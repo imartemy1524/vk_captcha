@@ -1,4 +1,4 @@
-# vk_captcha - solve vk captcha free for 60% accuracy
+# [vk_captcha](https://github.com/imartemy1524/vk_captcha) - solve vk captcha free for 60% accuracy
 ### Fast examples:</h3>
 #### using [vk_api](https://github.com/python273/vk_api) library:
 ```python

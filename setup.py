@@ -2,12 +2,13 @@ from distutils.core import setup
 with open("./requirements.txt") as req_file:
     requirements =[i.replace('\n', '').replace('\r', '') for i in req_file]
 setup(
-  name='vk-audio',         # How you named your package folder (MyLib)
-  packages=['vk-audio'],   # Chose the same as "name"
-  version='0.1',      # Start with a small number and increase it with every change you make
+  name='vk_captcha',         # How you named your package folder (MyLib)
+  packages=['vk_captcha'],   # Chose the same as "name"
+  version='0.6',      # Start with a small number and increase it with every change you make
   license='MIT',
   description='Library to solve vk captcha async/sync.\nFree.\nHigh speed.',
   author='IMCorp',                   # Type in your name
+  package_data={'vk_captcha': ['*.onnx']},
   author_email='imartemy1@gmail.com',
   url='https://github.com/imartemy1524/vk_captcha',   # Provide either the link to your github or to your website
   # download_url='https://github.com/imartemy1524/vk_captcha/archive/v_01.tar.gz',    # I explain this later on
