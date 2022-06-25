@@ -1,6 +1,6 @@
 <h1 align="center">
 <a href="https://github.com/imartemy1524/vk_captcha">vk_captcha</a> 
-- AI <a href="https://vk.com/dev">VK</a> captcha solver for <b>60%</b> accuracy
+- AI <a href="https://vk.com/dev">VK</a> captcha solver for <b>93.2%</b> accuracy
 </h1>
 
 ## Requirements
@@ -16,7 +16,7 @@ is not supporting **python3.10**
 ```
 pip install vk_captcha
 or
-pip install https://github.com/imartemy1524/vk_captcha/raw/main/dist/vk_captcha-0.9.tar.gz
+pip install https://github.com/imartemy1524/vk_captcha/raw/main/dist/vk_captcha-1.0.tar.gz
 or
 pip install git+https://github.com/imartemy1524/vk_captcha
 ```
@@ -83,6 +83,17 @@ async def captcha_solver():
     print(f"Solved captcha = {answer} with accuracy {accuracy:.4}")
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(captcha_solver())
+```
+Also, you can get some statistics of solving captcha:
+```python
+from vk_captcha import VkCaptchaSolver
+solver = VkCaptchaSolver()
+...
+# solve some captchas
+...
+time_for1captcha = solver.argv_solve_time
+total_solved = solver.TOTAL_COUNT
+fail_count = solver.FAIL_COUNT  # you need directly increase it after getting second captcha error
 ```
 
 In theory, for other languages you can use command line solver ( **NOT RECOMMENDED**, it will always load model again):

@@ -1,4 +1,4 @@
 from .solver import VkCaptchaSolver
 
-__version__ = '0.9'
+__version__ = '1.0'
 
