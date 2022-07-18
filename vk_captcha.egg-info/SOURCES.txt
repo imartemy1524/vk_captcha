@@ -1,0 +1,15 @@
+MANIFEST.in
+README.md
+requirements.txt
+setup.cfg
+setup.py
+vk_captcha/__init__.py
+vk_captcha/__main__.py
+vk_captcha/model.onnx
+vk_captcha/solver.py
+vk_captcha/vk_api_handler.py
+vk_captcha.egg-info/PKG-INFO
+vk_captcha.egg-info/SOURCES.txt
+vk_captcha.egg-info/dependency_links.txt
+vk_captcha.egg-info/requires.txt
+vk_captcha.egg-info/top_level.txt
