@@ -4,11 +4,12 @@
 </h1>
 
 ## Requirements
-> Python3.3 - python3.9
+> Python3.3 - python3.~~9~~10
 
-Python 3.10 is not supported yet because 
+~~Python 3.10 is not supported yet because 
 [onnxruntime](https://pypi.org/project/onnxruntime/) 
-is not supporting **python3.10**
+is not supporting **python3.10**~~
+#UPDATE: Python3.10 is supported
 
 ## Installation
 
