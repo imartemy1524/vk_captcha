@@ -60,6 +60,7 @@ class VkCaptchaSolver:
         :param session: requests.Session object or None
         :return answer:str, accuracy:float ( Range=[0,1])
         """
+        if url is not None: url = url.replace('&resized=1', '').replace("?resized=1&", '?')
         if self.logging:
             with logging_lock:
                 print(f"Solving captcha {url}")

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: vk-captcha
-Version: 1.1
+Version: 1.21
 Summary: UNKNOWN
 Home-page: https://github.com/imartemy1524/vk_captcha
 Author: IMCorp
@@ -40,7 +40,7 @@ is not supporting **python3.10**
 ```
 pip install vk_captcha
 or
-pip install https://github.com/imartemy1524/vk_captcha/raw/main/dist/vk_captcha-1.1.tar.gz
+pip install https://github.com/imartemy1524/vk_captcha/raw/main/dist/vk_captcha-1.21.tar.gz
 or
 pip install git+https://github.com/imartemy1524/vk_captcha
 ```
