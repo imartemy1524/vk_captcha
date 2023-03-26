@@ -18,7 +18,7 @@ is not supporting **python3.10**~~
 ```
 pip install vk_captcha
 or
-pip install https://github.com/imartemy1524/vk_captcha/raw/main/dist/vk_captcha-1.21.tar.gz
+pip install https://github.com/imartemy1524/vk_captcha/raw/main/dist/vk_captcha-2.0.tar.gz
 or
 pip install git+https://github.com/imartemy1524/vk_captcha
 ```
