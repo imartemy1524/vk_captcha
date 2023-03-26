@@ -10,7 +10,7 @@ with open("./requirements.txt") as req_file:
 setup(
   name='vk_captcha',
   packages=['vk_captcha'],
-  version='1.21',
+  version='2.0',
   license='MIT',
   author='IMCorp',
 #  description='Library to solve vk captcha async/sync.\nFree.\nHigh speed.',

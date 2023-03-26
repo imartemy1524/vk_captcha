@@ -25,6 +25,7 @@ pip install git+https://github.com/imartemy1524/vk_captcha
 
 
 ### Fast examples:
+Look into [VkHacker](VkHacker) for examples of accounts bruteforce
 
 #### using [vk_api](https://github.com/python273/vk_api) library:
 
