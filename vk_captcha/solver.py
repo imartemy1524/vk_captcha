@@ -149,26 +149,38 @@ class VkCaptchaSolver:
     def _solve_task(self, data_bytes: bytes):
         t = time.time()
 
-        img = cv2.imdecode(np.asarray(bytearray(data_bytes), dtype=np.uint8), -1)
-        img: "np.ndarray" = img.astype(np.float32) / 255.
-        if img.shape != (img_height, img_width, 3):
-            cv2.resize(img, (img_width, img_height))
-        img = img.transpose([1, 0, 2])
-        #  Creating tensor ( adding 4d dimension )
-        img = np.array([img])
-        # !!!HERE MAGIC COMES!!!!
-        result_tensor = self.Model.run(None, {self.ModelName: img})[0]
-        # decoding output
-        answer, accuracy = self.get_result(result_tensor)
+        try:
+            img = cv2.imdecode(np.asarray(bytearray(data_bytes), dtype=np.uint8), -1)
+            if img is None:
+                raise ValueError("Failed to decode image.")
 
-        delta = time.time() - t
-        with lock:
-            VkCaptchaSolver.TOTAL_TIME += delta
-        if self.logging:
-            with logging_lock:
-                print(f"Solved captcha = {answer} ({accuracy:.2%} {time.time() - t:.3}sec.)")
+            img = img.astype(np.float32) / 255.
+            if img.shape != (img_height, img_width, 3):
+                img = cv2.resize(img, (img_width, img_height))
+            img = img.transpose([1, 0, 2])
+            img = np.array([img])
 
-        return answer, accuracy
+            # Ensure self.Model is loaded and initialized properly.
+            if self.Model is None:
+                raise ValueError("Model is not loaded or initialized.")
+
+            # !!!HERE MAGIC COMES!!!!
+            result_tensor = self.Model.run(None, {self.ModelName: img})[0]
+            # decoding output
+            answer, accuracy = self.get_result(result_tensor)
+
+            delta = time.time() - t
+            with lock:
+                VkCaptchaSolver.TOTAL_TIME += delta
+            if self.logging:
+                with logging_lock:
+                    print(f"Solved captcha = {answer} ({accuracy:.2%} {time.time() - t:.3}sec.)")
+
+            return answer, accuracy
+
+        except Exception as e:
+            print(f"Error during captcha solving: {e}")
+            return None, 0.0
 
     async def vk_wave_captcha_handler(self, error: dict, api_ctx: 'APIOptionsRequestContext'):
         method = error["error"]["request_params"][0]["value"]
