@@ -186,7 +186,7 @@ class VkCaptchaSolver:
             bytearray(data_bytes), dtype=np.uint8), -1)
         img: "np.ndarray" = img.astype(np.float32) / 255.
         if img.shape != (img_height, img_width, 3):
-            cv2.resize(img, (img_width, img_height))
+            img = cv2.resize(img, (img_width, img_height))
         img = img.transpose([1, 0, 2])
         #  Creating tensor ( adding 4d dimension )
         img = np.array([img])
