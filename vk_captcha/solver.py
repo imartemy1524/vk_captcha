@@ -158,6 +158,8 @@ class VkCaptchaSolver:
                         if bytes_data is None:
                             raise ProxyError(
                                 "Can not download captcha - probably proxy error")
+                        if resp.status != 200:
+                            raise ProxyError(f"resp.status: {resp.status}")
                         break
                     except Exception:
                         if _ == 3:
