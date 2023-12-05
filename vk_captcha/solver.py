@@ -1,32 +1,21 @@
 import concurrent.futures
 import os.path
 import time
-import aiohttp
-import asyncio
+import aiohttp, asyncio
 
 import onnxruntime as onr
 import numpy as np
 import requests
 import cv2
-import vk_api
-import threading
+import vk_api, threading
 from requests.exceptions import ProxyError
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from vkbottle import CaptchaError
-    from vk_wave import APIOptionsRequestContext
-
-characters = ['z', 's', 'h', 'q', 'd', 'v', '2', '7', '8',
-              'x', 'y', '5', 'e', 'a', 'u', '4', 'k', 'n', 'm', 'c', 'p']
+characters = ['z', 's', 'h', 'q', 'd', 'v', '2', '7', '8', 'x', 'y', '5', 'e', 'a', 'u', '4', 'k', 'n', 'm', 'c', 'p']
 img_width = 130
 img_height = 50
 lock = threading.Lock()
-# you can use some existing lock for logging
-logging_lock: "threading.Lock|None" = None
+logging_lock: "threading.Lock|None" = None  # you can use some existing lock for logging
 max_length = 7
-
-
 class VkCaptchaSolver:
     """
     Vk captcha handling
@@ -49,70 +38,67 @@ class VkCaptchaSolver:
     TOTAL_COUNT = 0
     FAIL_COUNT = 1
     TOTAL_TIME = 0
-
     def __init__(self, logging=False, model_fname=os.path.dirname(__file__) + "/model.onnx"):
         self.logging = logging
         self.Model = onr.InferenceSession(model_fname)
         self.ModelName = self.Model.get_inputs()[0].name
-
     def solve(self, url=None, bytes_data=None, minimum_accuracy=0, repeat_count=10, session=None) -> 'str,float':
-        """Solves VK captcha
-        :param bytes_data: Raw image data
-        :type bytes_data: bytes
-        :param url: url of the captcha ( or pass bytes_data )
-        :type url: str
-        :param minimum_accuracy: Minimum accuracy of recognition.
-                                 If accuracy < minimum_accuracy then download captcha again
-                                 and solve it again. (Do it for repeat_count times)
-                                 Works only with url passed
-                                 Range = [0,1]
-        :type minimum_accuracy: float
-        :param repeat_count: Repeat solving count ( look at minimum_accuracy )
-                                Range = [1,999]
-        :type repeat_count: int
-        :param session: requests.Session object or None
-        :return Tuple[answer:str, accuracy:float ( Range=[0,1]) ]
-        """
-        if url is not None:
+        if url is not None: 
             url = url.replace('&resized=1', '').replace("?resized=1&", '?')
         if self.logging:
             with logging_lock:
                 print(f"Solving captcha {url}")
-        if repeat_count < 1:
+        if repeat_count < 1: 
             raise ValueError(f"Parameter repeat_count = {repeat_count} < 1")
+
         for i in range(repeat_count):
-            if url is not None:
-                for _ in range(4):
-                    try:
-                        bytes_data = (session or requests).get(
-                            url, headers={"Content-language": "en"}).content
-                        if bytes_data is None:
-                            raise ProxyError(
-                                "Can not download data, probably proxy error")
+            valid_image = False
+            for attempt in range(5):  # Retry downloading 5 times
+                try:
+                    bytes_data = (session or requests).get(url, headers={"Content-language": "en"}, timeout=5).content
+                    if bytes_data and self._is_valid_image(bytes_data):
+                        valid_image = True
                         break
-                    except:
-                        if _ == 3:
-                            raise
-                        time.sleep(0.5)
+                    else:
+                        if self.logging:
+                            with logging_lock:
+                                print(f"Invalid image data or empty response, retrying {attempt + 1}/5")
+                except Exception as e:
+                    if self.logging:
+                        with logging_lock:
+                            print(f"Error downloading image: {e}, retrying {attempt + 1}/5")
+                    if attempt == 4:
+                        raise
+
+            if not valid_image:
+                continue  # Skip if image is not valid
+
             answer, accuracy = self._solve_task(bytes_data)
             if accuracy >= minimum_accuracy or url is None:
                 break
             if self.logging:
                 with logging_lock:
-                    print(
-                        f"Solved accuracy(={accuracy:.4}) < miniumum(={minimum_accuracy:.4}). Trying again.")
-        with lock:
+                    print(f"Solved accuracy(={accuracy:.4}) < minimum(={minimum_accuracy:.4}). Trying again.")
+
+        with lock: 
             VkCaptchaSolver.TOTAL_COUNT += 1
         return answer, accuracy
+
+    def _is_valid_image(self, bytes_data):
+        """_summary_
+        """
+        try:
+            img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+            return img is not None
+        except Exception:
+            return False
 
     @property
     def argv_solve_time(self):
         """Argv solve time in seconds per one captcha.
         Start returning value after first solve ( solve_async) call"""
         with lock:
-            # zero division error capturing
-            return VkCaptchaSolver.TOTAL_TIME / (VkCaptchaSolver.TOTAL_COUNT or 1)
-
+            return VkCaptchaSolver.TOTAL_TIME / (VkCaptchaSolver.TOTAL_COUNT or 1)  # zero division error capturing
     @property
     def _async_runner(self):
         if not hasattr(VkCaptchaSolver, "_runner"):
@@ -120,7 +106,6 @@ class VkCaptchaSolver:
                 max_workers=5
             )
         return VkCaptchaSolver._runner
-
     async def solve_async(self, url=None, bytes_data=None, minimum_accuracy=0, repeat_count=10, session=None) -> 'str,float':
         """Solves VK captcha async
         :param bytes_data: Raw image data
@@ -140,10 +125,8 @@ class VkCaptchaSolver:
         :type repeat_count: int
         :return answer:str, accuracy:float ( Range=[0,1])
         """
-        if self.logging:
-            print(f"Solving captcha {url}")
-        if repeat_count < 1:
-            raise ValueError(f"Parameter repeat_count = {repeat_count} < 1")
+        if self.logging: print(f"Solving captcha {url}")
+        if repeat_count < 1: raise ValueError(f"Parameter repeat_count = {repeat_count} < 1")
         for i in range(repeat_count):
             if url is not None:
                 for _ in range(4):
@@ -155,40 +138,29 @@ class VkCaptchaSolver:
                         else:
                             async with session.get(url) as resp:
                                 bytes_data = await resp.content.read()
-                        if bytes_data is None:
-                            raise ProxyError(
-                                "Can not download captcha - probably proxy error")
-                        if resp.status != 200:
-                            raise ProxyError(f"resp.status: {resp.status}")
+                        if bytes_data is None: raise ProxyError("Can not download captcha - probably proxy error")
                         break
                     except Exception:
-                        if _ == 3:
-                            raise
+                        if _ == 3: raise
                         await asyncio.sleep(0.5)
-            if self.logging:
-                t = time.time()
+            if self.logging: t = time.time()
             #  running in background async
-            res = asyncio.get_event_loop().run_in_executor(
-                self._async_runner, self._solve_task, bytes_data)
+            res = asyncio.get_event_loop().run_in_executor(self._async_runner, self._solve_task, bytes_data)
             completed, _ = await asyncio.wait((res,))
             #  getting result
             answer, accuracy = next(iter(completed)).result()
             if accuracy >= minimum_accuracy or url is None:
                 break
-            print(
-                f"Solved accuracy(={accuracy:.4}) < miniumum(={minimum_accuracy:.4}). Trying again.")
-        with lock:
-            VkCaptchaSolver.TOTAL_COUNT += 1
+            print(f"Solved accuracy(={accuracy:.4}) < miniumum(={minimum_accuracy:.4}). Trying again.")
+        with lock: VkCaptchaSolver.TOTAL_COUNT += 1
         return answer, accuracy
-
     def _solve_task(self, data_bytes: bytes):
         t = time.time()
 
-        img = cv2.imdecode(np.asarray(
-            bytearray(data_bytes), dtype=np.uint8), -1)
+        img = cv2.imdecode(np.asarray(bytearray(data_bytes), dtype=np.uint8), -1)
         img: "np.ndarray" = img.astype(np.float32) / 255.
         if img.shape != (img_height, img_width, 3):
-            img = cv2.resize(img, (img_width, img_height))
+            cv2.resize(img, (img_width, img_height))
         img = img.transpose([1, 0, 2])
         #  Creating tensor ( adding 4d dimension )
         img = np.array([img])
@@ -202,8 +174,7 @@ class VkCaptchaSolver:
             VkCaptchaSolver.TOTAL_TIME += delta
         if self.logging:
             with logging_lock:
-                print(
-                    f"Solved captcha = {answer} ({accuracy:.2%} {time.time() - t:.3}sec.)")
+                print(f"Solved captcha = {answer} ({accuracy:.2%} {time.time() - t:.3}sec.)")
 
         return answer, accuracy
 
@@ -217,14 +188,11 @@ class VkCaptchaSolver:
 
         key = await self.solve_async(error["error"]["captcha_img"], minimum_accuracy=0.33)
 
-        request_params.update(
-            {"captcha_sid": error["error"]["captcha_sid"], "captcha_key": key})
+        request_params.update({"captcha_sid": error["error"]["captcha_sid"], "captcha_key": key})
         return await api_ctx.api_request(method, params=request_params)
-
     def vk_wave_attach_to_api_session(self, api_session):
         d = api_session.default_api_options.error_dispatcher
         d.add_handler(14, self.vk_wave_captcha_handler)
-
     @staticmethod
     def get_result(pred):
         """CTC decoder of the output tensor
@@ -253,22 +221,11 @@ class VkCaptchaSolver:
 
     def vk_api_captcha_handler(self, captcha, minimum_accuracy=0.3, repeat_count=10):
         """vk_api.VkApi captcha handler function"""
-        key, _ = self.solve(
-            captcha.get_url(), minimum_accuracy=minimum_accuracy, repeat_count=repeat_count)
+        key, _ = self.solve(captcha.get_url(), minimum_accuracy=minimum_accuracy, repeat_count=repeat_count)
         try:
             ans = captcha.try_again(key)
             return ans
         except vk_api.ApiError as e:
             if e.code == vk_api.vk_api.CAPTCHA_ERROR_CODE:
-                with lock:
-                    VkCaptchaSolver.FAIL_COUNT += 1
+                with lock: VkCaptchaSolver.FAIL_COUNT += 1
             raise
-
-    async def vkbottle_captcha_handler(self, error: "CaptchaError", **kwargs) -> str:
-        if isinstance(error, Exception) and hasattr(error, 'code'):
-            if error.code == 14:
-                if hasattr(error, 'captcha_img'):
-                    url = error.captcha_img
-                if hasattr(error, 'img'):
-                    url = error.img
-                return (await self.solve_async(url=url, **kwargs))[0]
